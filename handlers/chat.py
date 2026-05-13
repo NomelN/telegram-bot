@@ -1,3 +1,4 @@
+# pyrefly: ignore [missing-import]
 from telebot import TeleBot
 from config import Config
 from keyboards import Keyboards
@@ -107,10 +108,10 @@ def register_chat_handlers(bot: TeleBot):
         """Gère les actions après avoir consulté météo ou actualités"""
         if msg.text == "🌤️ Autre ville":
             from handlers.meteo import ask_city
-            ask_city(msg)
+            ask_city(bot, msg)
         elif msg.text == "📰 Autre thème":
             from handlers.actualites import ask_theme
-            ask_theme(msg)
+            ask_theme(bot, msg)
         elif msg.text == "📍 Météo favorite":
             # Exemple de ville favorite (à implémenter avec une BDD)
             bot.send_message(msg.chat.id, "⭐ Fonctionnalité 'favoris' bientôt disponible !")

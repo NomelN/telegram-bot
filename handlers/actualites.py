@@ -1,3 +1,4 @@
+# pyrefly: ignore [missing-import]
 from telebot import TeleBot
 from config import Config
 from keyboards import Keyboards
@@ -7,21 +8,24 @@ from utils.session_manager import session_manager, SessionMode
 # Initialiser le service DeepSeek
 deepseek_service = DeepSeekService()
 
+def ask_theme(bot, msg):
+    """Demande le thème des actualités (fonction exportable)"""
+    session_manager.set_mode(msg.chat.id, SessionMode.WAITING_THEME)
+    
+    bot.send_message(
+        msg.chat.id,
+        "📰 *Quel thème d'actualité vous intéresse ?*\n\n"
+        "Choisissez un thème ou tapez votre propre sujet.",
+        parse_mode="Markdown",
+        reply_markup=Keyboards.themes_actualites()
+    )
+
 def register_news_handlers(bot: TeleBot):
     """Enregistre les handlers pour les actualités"""
     
     @bot.message_handler(func=lambda msg: msg.text == "📰 Actualités")
-    def ask_theme(msg):
-        """Demande le thème des actualités"""
-        session_manager.set_mode(msg.chat.id, SessionMode.WAITING_THEME)
-        
-        bot.send_message(
-            msg.chat.id,
-            "📰 *Quel thème d'actualité vous intéresse ?*\n\n"
-            "Choisissez un thème ou tapez votre propre sujet.",
-            parse_mode="Markdown",
-            reply_markup=Keyboards.themes_actualites()
-        )
+    def _ask_theme_handler(msg):
+        ask_theme(bot, msg)
     
     @bot.message_handler(func=lambda msg: session_manager.get_mode(msg.chat.id) == SessionMode.WAITING_THEME)
     def show_news(msg):
