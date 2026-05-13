@@ -31,7 +31,9 @@ class Config:
         • 🌤️ Météo : Météo en temps réel
         • 📰 Actualités : Dernières news par thème
         • 🗺️ Itinéraire : Planification de trajets
+        • 💬 Convertisseur : Conversion de devises
         • 💬 Chat Libre : Discussion avec l'IA
+        
 
         Choisissez une option ci-dessous :
     """
