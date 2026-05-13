@@ -1,111 +1,58 @@
 import requests
-from typing import Optional, List, Dict
+from datetime import datetime, timedelta
 from config import Config
 
 class NewsService:
-    """Service pour récupérer les actualités (optionnel, avec NewsAPI)"""
-    
+    """Service pour récupérer et formater les actualités via NewsAPI"""
+
     def __init__(self):
         self.api_key = Config.NEWS_API_KEY
-        self.base_url = Config.NEWS_API_URL
-    
-    def get_news_by_category(self, category: str, country: str = "fr", limit: int = 5) -> Optional[List[Dict]]:
+        if not self.api_key:
+            print("⚠️ NEWS_API_KEY non définie dans le fichier .env")
+        self.base_url = "https://newsapi.org/v2/everything"
+
+    def get_live_news(self, theme: str, limit: int = 5) -> list:
         """
-        Récupère les actualités par catégorie depuis NewsAPI
-        
-        Catégories disponibles :
-        - business, entertainment, general, health, science, sports, technology
+        Récupère les dernières actualités pour un thème donné.
         """
         if not self.api_key:
-            return None
-        
-        category_map = {
-            "monde": "general",
-            "france": "general",
-            "technologie": "technology",
-            "sport": "sports",
-            "culture": "entertainment",
-            "économie": "business",
-            "science": "science",
-            "santé": "health"
-        }
-        
-        api_category = category_map.get(category.lower(), "general")
-        
+            return []
+
+        # Définir la période de recherche (aujourd'hui et hier)
+        today = datetime.now().strftime('%Y-%m-%d')
+        yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+
         params = {
             'apiKey': self.api_key,
-            'category': api_category,
-            'country': country,
-            'pageSize': limit,
-            'language': 'fr'
+            'q': theme,
+            'from': yesterday,
+            'to': today,
+            'language': 'fr',
+            'sortBy': 'publishedAt',
+            'pageSize': limit
         }
-        
+
         try:
             response = requests.get(self.base_url, params=params)
             response.raise_for_status()
             data = response.json()
-            
             if data.get('status') == 'ok':
                 return data.get('articles', [])
-            return None
-            
+            else:
+                print(f"Erreur API News: {data.get('message')}")
+                return []
         except requests.RequestException as e:
-            print(f"Erreur NewsAPI : {e}")
-            return None
-    
-    def format_articles(self, articles: List[Dict], theme: str) -> str:
-        """Formate les articles en message Telegram"""
+            print(f"Erreur réseau NewsAPI : {e}")
+            return []
+
+    def format_articles_for_ai(self, articles: list) -> str:
+        """Formate les articles pour les donner comme contexte à l'IA."""
         if not articles:
-            return f"❌ Aucune actualité trouvée pour le thème '{theme}'."
-        
-        formatted = f"📰 *Actualités - {theme}*\n\n"
-        
-        for i, article in enumerate(articles[:5], 1):
+            return "Aucune actualité trouvée pour le moment."
+
+        formatted = "Voici les dernières actualités :\n"
+        for i, article in enumerate(articles, 1):
             title = article.get('title', 'Sans titre')
             description = article.get('description', 'Pas de description')
-            url = article.get('url', '')
-            source = article.get('source', {}).get('name', 'Inconnue')
-            
-            # Tronquer les descriptions trop longues
-            if len(description) > 200:
-                description = description[:197] + "..."
-            
-            formatted += f"{i}️⃣ *{title}*\n"
-            formatted += f"📝 _{description}_\n"
-            formatted += f"📰 Source : {source}\n"
-            if url:
-                formatted += f"🔗 [Lire plus]({url})\n"
-            formatted += "\n"
-        
-        formatted += "⚠️ *Note* : Actualités fournies par NewsAPI.org"
-        
+            formatted += f"{i}. {title}\n   {description}\n\n"
         return formatted
-    
-    def search_news(self, query: str, limit: int = 5) -> Optional[List[Dict]]:
-        """Recherche des actualités par mot-clé"""
-        if not self.api_key:
-            return None
-        
-        params = {
-            'apiKey': self.api_key,
-            'q': query,
-            'pageSize': limit,
-            'language': 'fr',
-            'sortBy': 'publishedAt'
-        }
-        
-        try:
-            response = requests.get("https://newsapi.org/v2/everything", params=params)
-            response.raise_for_status()
-            data = response.json()
-            
-            if data.get('status') == 'ok':
-                return data.get('articles', [])
-            return None
-            
-        except requests.RequestException as e:
-            print(f"Erreur recherche NewsAPI : {e}")
-            return None
-
-# Instance du service
-news_service = NewsService()

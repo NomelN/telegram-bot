@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from openai import OpenAI
 from config import Config
+from services.news_service import NewsService
 
 class DeepSeekService:
     """Service pour interagir avec l'API DeepSeek"""
@@ -24,20 +27,36 @@ class DeepSeekService:
             raise Exception(f"Erreur DeepSeek: {str(e)}")
     
     def generate_news(self, theme: str) -> str:
-        """Génère un résumé d'actualités sur un thème"""
-        prompt = f"""Tu es un journaliste. Donne-moi les 5 dernières actualités importantes 
-        sur le thème : {theme}. 
-        
-        Pour chaque actualité :
-        - Un titre en gras avec emoji
-        - Un résumé de 2-3 phrases
-        - La date approximative
-        
-        Format Markdown. Sois concis mais informatif.
-        Précise que ce sont des informations simulées basées sur ta connaissance jusqu'en mai 2025."""
-        
+        """Génère un résumé d'actualités basé sur de VRAIS articles de 2026."""
+
+        # 1. Essayer de récupérer de vraies actualités
+        live_articles = []
+        try:
+            from services.news_service import NewsService
+            news_service = NewsService()
+            live_articles = news_service.get_live_news(theme)
+        except Exception as e:
+            print(f"Impossible d'utiliser NewsAPI: {e}")
+
+        # 2. Créer le message pour DeepSeek
+        if live_articles:
+            # Si on a de vrais articles, on les donne comme contexte à l'IA
+            context = news_service.format_articles_for_ai(live_articles)
+            prompt = f"""Tu es un journaliste qui doit faire un résumé de ces actualités.
+            Voici les dernières nouvelles du {datetime.now().strftime('%d/%m/%Y')} pour le thème '{theme}' :
+            
+            {context}
+            
+            Résume ces informations en 3 à 5 points avec des émojis et un format Markdown clair.
+            """
+        else:
+            # Message de secours si l'API ne répond pas
+            prompt = f"""Donne les tendances ou événements majeurs de 2025 sur le thème '{theme}'.
+            Mentionne que les infos sont basées sur ta connaissance et peuvent être datées.
+            """
+
         messages = [{"role": "user", "content": prompt}]
-        return self.generate_response(messages, temperature=0.7, max_tokens=800)
+        return self.generate_response(messages, temperature=0.5, max_tokens=800)
     
     def generate_route(self, departure: str, arrival: str) -> str:
         """Génère un itinéraire entre deux villes"""
