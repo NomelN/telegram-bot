@@ -1,7 +1,7 @@
 import re
 from telebot import TeleBot, types
 from config import Config
-from keyboards import Keyboards
+from utils.keyboards import Keyboards
 from services.currency_service import currency_service
 from handlers.menu import show_main_menu
 from utils.session_manager import session_manager, SessionMode

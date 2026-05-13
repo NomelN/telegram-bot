@@ -1,6 +1,6 @@
 from telebot import TeleBot
 from config import Config
-from keyboards import Keyboards
+from utils.keyboards import Keyboards
 from utils.session_manager import session_manager, SessionMode
 
 def show_main_menu(bot: TeleBot, msg):

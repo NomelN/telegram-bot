@@ -1,8 +1,12 @@
 from datetime import datetime
+from typing import Optional
 
 from openai import OpenAI
 from config import Config
 from services.news_service import NewsService
+from utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 class DeepSeekService:
     """Service pour interagir avec l'API DeepSeek"""
@@ -14,7 +18,12 @@ class DeepSeekService:
         )
         self.news_service = NewsService()
     
-    def generate_response(self, messages: list, temperature: float = None, max_tokens: int = None) -> str:
+    def generate_response(
+        self,
+        messages: list[dict],
+        temperature: Optional[float] = None,
+        max_tokens: Optional[int] = None,
+    ) -> str:
         """Génère une réponse via DeepSeek"""
         try:
             response = self.client.chat.completions.create(
@@ -35,7 +44,7 @@ class DeepSeekService:
         try:
             live_articles = self.news_service.get_live_news(theme)
         except Exception as e:
-            print(f"Impossible d'utiliser NewsAPI: {e}")
+            logger.exception("Impossible d'utiliser NewsAPI: %s", e)
 
         # 2. Créer le message pour DeepSeek
         if live_articles:

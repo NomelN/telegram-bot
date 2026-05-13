@@ -1,6 +1,6 @@
 from telebot import TeleBot
 from config import Config
-from keyboards import Keyboards
+from utils.keyboards import Keyboards
 from services import deepseek_service
 from handlers.menu import show_main_menu
 from utils.session_manager import session_manager, SessionMode
@@ -91,7 +91,7 @@ def register_route_handlers(bot: TeleBot):
             # Proposer des actions
             session_manager.set_mode(
                 msg.chat.id,
-                SessionMode.WAITING_ACTION,
+                SessionMode.WAITING_ROUTE_ACTION,
                 {
                     "dernier_depart": departure,
                     "derniere_arrivee": arrival
@@ -111,7 +111,7 @@ def register_route_handlers(bot: TeleBot):
                 loading_msg.message_id
             )
     
-    @bot.message_handler(func=lambda msg: msg.text in ["🗺️ Nouvel itinéraire", "🚗 Alternatives"] and session_manager.get_mode(msg.chat.id) == SessionMode.WAITING_ACTION)
+    @bot.message_handler(func=lambda msg: msg.text in ["🗺️ Nouvel itinéraire", "🚗 Alternatives"] and session_manager.get_mode(msg.chat.id) == SessionMode.WAITING_ROUTE_ACTION)
     def handle_route_action(msg):
         """Gère les actions après un itinéraire"""
         if msg.text == "🗺️ Nouvel itinéraire":

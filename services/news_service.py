@@ -1,6 +1,10 @@
 import requests
 from datetime import datetime, timedelta
 from config import Config
+from utils.logger import get_logger
+
+logger = get_logger(__name__)
+
 
 class NewsService:
     """Service pour récupérer et formater les actualités via NewsAPI"""
@@ -8,10 +12,10 @@ class NewsService:
     def __init__(self):
         self.api_key = Config.NEWS_API_KEY
         if not self.api_key:
-            print("⚠️ NEWS_API_KEY non définie dans le fichier .env")
+            logger.warning("NEWS_API_KEY non définie — service indisponible")
         self.base_url = Config.NEWS_API_URL
 
-    def get_live_news(self, theme: str, limit: int = 5) -> list:
+    def get_live_news(self, theme: str, limit: int = 5) -> list[dict]:
         """
         Récupère les dernières actualités pour un thème donné.
         """
@@ -39,13 +43,13 @@ class NewsService:
             if data.get('status') == 'ok':
                 return data.get('articles', [])
             else:
-                print(f"Erreur API News: {data.get('message')}")
+                logger.error("NewsAPI: %s", data.get('message'))
                 return []
         except requests.RequestException as e:
-            print(f"Erreur réseau NewsAPI : {e}")
+            logger.exception("Erreur réseau NewsAPI: %s", e)
             return []
 
-    def format_articles_for_ai(self, articles: list) -> str:
+    def format_articles_for_ai(self, articles: list[dict]) -> str:
         """Formate les articles pour les donner comme contexte à l'IA."""
         if not articles:
             return "Aucune actualité trouvée pour le moment."

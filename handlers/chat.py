@@ -1,10 +1,13 @@
 # pyrefly: ignore [missing-import]
 from telebot import TeleBot
 from config import Config
-from keyboards import Keyboards
+from utils.keyboards import Keyboards
 from services import deepseek_service
 from handlers.menu import show_main_menu
+from utils.logger import get_logger
 from utils.session_manager import session_manager, SessionMode
+
+logger = get_logger(__name__)
 
 
 def register_chat_handlers(bot: TeleBot):
@@ -80,7 +83,7 @@ def register_chat_handlers(bot: TeleBot):
             else:
                 bot.send_message(msg.chat.id, response, parse_mode="Markdown")
 
-            print(f"💬 Chat - Utilisateur {msg.chat.id} - Message traité")
+            logger.info("Chat — user=%s message traité", msg.chat.id)
 
         except Exception as e:
             bot.send_message(

@@ -1,5 +1,8 @@
+import logging
 import os
 from dotenv import load_dotenv
+
+_logger = logging.getLogger(__name__)
 
 # Charger les variables d'environnement à partir du fichier .env
 load_dotenv()
@@ -58,4 +61,4 @@ class Config:
 
         missing_optional = [key for key in optional_keys if not getattr(cls, key)]
         if missing_optional:
-            print(f"⚠️ Clés API optionnelles manquantes : {', '.join(missing_optional)}")
+            _logger.warning("Clés API optionnelles manquantes : %s", ', '.join(missing_optional))

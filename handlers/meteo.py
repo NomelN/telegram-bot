@@ -1,7 +1,7 @@
 # pyrefly: ignore [missing-import]
 from telebot import TeleBot
 from config import Config
-from keyboards import Keyboards
+from utils.keyboards import Keyboards
 from services.meteo_service import MeteoService
 from handlers.menu import show_main_menu
 from utils.session_manager import session_manager, SessionMode
@@ -56,7 +56,7 @@ def register_meteo_handlers(bot: TeleBot):
             )
         
         # Proposer des actions
-        session_manager.set_mode(msg.chat.id, SessionMode.WAITING_ACTION)
+        session_manager.set_mode(msg.chat.id, SessionMode.WAITING_WEATHER_ACTION)
         bot.send_message(
             msg.chat.id,
             "Que voulez-vous faire ?",

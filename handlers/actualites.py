@@ -1,7 +1,7 @@
 # pyrefly: ignore [missing-import]
 from telebot import TeleBot
 from config import Config
-from keyboards import Keyboards
+from utils.keyboards import Keyboards
 from services import deepseek_service
 from handlers.menu import show_main_menu
 from utils.session_manager import session_manager, SessionMode
@@ -67,8 +67,8 @@ def register_news_handlers(bot: TeleBot):
             
             # Sauvegarder le thème pour la discussion
             session_manager.set_mode(
-                msg.chat.id, 
-                SessionMode.WAITING_ACTION,
+                msg.chat.id,
+                SessionMode.WAITING_NEWS_ACTION,
                 {"dernier_theme": theme}
             )
             
@@ -86,7 +86,7 @@ def register_news_handlers(bot: TeleBot):
                 loading_msg.message_id
             )
     
-    @bot.message_handler(func=lambda msg: msg.text == "💬 En discuter" and session_manager.get_mode(msg.chat.id) == SessionMode.WAITING_ACTION)
+    @bot.message_handler(func=lambda msg: msg.text == "💬 En discuter" and session_manager.get_mode(msg.chat.id) == SessionMode.WAITING_NEWS_ACTION)
     def discuss_news(msg):
         """Lance une discussion sur le dernier thème d'actualité"""
         session_data = session_manager.get_session(msg.chat.id)

@@ -1,6 +1,11 @@
 import requests
 from datetime import datetime, timedelta
+from typing import Optional
 from config import Config
+from utils.logger import get_logger
+
+logger = get_logger(__name__)
+
 
 class CurrencyService:
     """Service de conversion de devises utilisant ExchangeRate-API V6"""
@@ -8,18 +13,17 @@ class CurrencyService:
     def __init__(self):
         self.api_key = Config.EXCHANGE_RATE_API_KEY
         if not self.api_key:
-            print("⚠️ ATTENTION: Clé API ExchangeRate non définie dans .env")
-            print("Le service de conversion ne fonctionnera pas correctement.")
+            logger.warning("Clé API ExchangeRate non définie — service indisponible")
             self.base_url = None
         else:
             self.base_url = f"{Config.EXCHANGE_RATE_BASE_URL}/{self.api_key}/latest/"
-            print("✅ Service de conversion initialisé avec la clé API")
+            logger.info("Service de conversion initialisé")
         
         # Cache pour éviter trop de requêtes (valable 1 heure)
         self.cache = {}
         self.cache_duration = timedelta(hours=1)
     
-    def get_rates(self, base_currency: str = "EUR") -> dict:
+    def get_rates(self, base_currency: str = "EUR") -> Optional[dict]:
         """Récupère les taux de change pour une devise de base."""
         if not self.base_url:
             return None
@@ -29,36 +33,33 @@ class CurrencyService:
         if base_currency in self.cache:
             cached_time = self.cache[base_currency].get("_timestamp")
             if cached_time and (now - cached_time) < self.cache_duration:
-                print(f"📦 Utilisation du cache pour {base_currency}")
+                logger.debug("Cache hit pour %s", base_currency)
                 return self.cache[base_currency]["data"]
-        
+
         try:
             url = f"{self.base_url}{base_currency}"
-            print(f"🌐 Requête API: {url}")
+            logger.debug("Requête API: %s", url)
             response = requests.get(url)
-            
-            # Vérifie si la requête a réussi
+
             if response.status_code != 200:
-                print(f"❌ Erreur API: Status {response.status_code}")
+                logger.error("ExchangeRate API status %s", response.status_code)
                 return None
-                
+
             data = response.json()
-            
-            # Vérifie le résultat de l'API
+
             if data.get("result") == "success":
-                # Met en cache avec un timestamp
                 self.cache[base_currency] = {
                     "data": data,
                     "_timestamp": now
                 }
-                print(f"✅ Taux récupérés pour {base_currency}")
+                logger.info("Taux récupérés pour %s", base_currency)
                 return data
             else:
-                print(f"❌ Erreur API: {data.get('error-type', 'inconnue')}")
+                logger.error("ExchangeRate API: %s", data.get('error-type', 'inconnue'))
                 return None
-                
+
         except requests.RequestException as e:
-            print(f"❌ Erreur réseau: {e}")
+            logger.exception("Erreur réseau ExchangeRate: %s", e)
             return None
     
     def convert(self, amount: float, from_currency: str, to_currency: str) -> dict:
