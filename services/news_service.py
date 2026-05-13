@@ -9,7 +9,7 @@ class NewsService:
         self.api_key = Config.NEWS_API_KEY
         if not self.api_key:
             print("⚠️ NEWS_API_KEY non définie dans le fichier .env")
-        self.base_url = "https://newsapi.org/v2/everything"
+        self.base_url = Config.NEWS_API_URL
 
     def get_live_news(self, theme: str, limit: int = 5) -> list:
         """

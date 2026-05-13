@@ -1,5 +1,6 @@
 from typing import Dict, Any, Optional
 from enum import Enum
+from config import Config
 
 class SessionMode(Enum):
     """Modes de session utilisateur"""
@@ -32,8 +33,7 @@ class UserSession:
         """Ajoute un message à l'historique"""
         self.history.append({"role": role, "content": message})
         
-        # Limiter la taille de l'historique
-        max_length = 20  # À remplacer par Config.MAX_HISTORY_LENGTH
+        max_length = Config.MAX_HISTORY_LENGTH
         if len(self.history) > max_length:
             self.history = self.history[-max_length:]
 

@@ -1,25 +1,19 @@
 import requests
-import os
 from datetime import datetime, timedelta
-from dotenv import load_dotenv
-
-# Charge les variables depuis le fichier .env
-load_dotenv()
+from config import Config
 
 class CurrencyService:
     """Service de conversion de devises utilisant ExchangeRate-API V6"""
-    
+
     def __init__(self):
-        # Récupère la clé API depuis les variables d'environnement
-        self.api_key = os.getenv("EXCHANGE_RATE_API_KEY")
+        self.api_key = Config.EXCHANGE_RATE_API_KEY
         if not self.api_key:
             print("⚠️ ATTENTION: Clé API ExchangeRate non définie dans .env")
             print("Le service de conversion ne fonctionnera pas correctement.")
             self.base_url = None
         else:
-            # Utilise l'URL de la V6 avec votre clé
-            self.base_url = f"https://v6.exchangerate-api.com/v6/{self.api_key}/latest/"
-            print(f"✅ Service de conversion initialisé avec la clé API")
+            self.base_url = f"{Config.EXCHANGE_RATE_BASE_URL}/{self.api_key}/latest/"
+            print("✅ Service de conversion initialisé avec la clé API")
         
         # Cache pour éviter trop de requêtes (valable 1 heure)
         self.cache = {}

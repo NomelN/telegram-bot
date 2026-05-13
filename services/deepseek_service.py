@@ -31,9 +31,8 @@ class DeepSeekService:
 
         # 1. Essayer de récupérer de vraies actualités
         live_articles = []
+        news_service = NewsService()
         try:
-            from services.news_service import NewsService
-            news_service = NewsService()
             live_articles = news_service.get_live_news(theme)
         except Exception as e:
             print(f"Impossible d'utiliser NewsAPI: {e}")
