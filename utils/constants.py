@@ -9,7 +9,15 @@ MENU_NEWS = "📰 Actualités"
 MENU_ROUTE = "🗺️ Itinéraire"
 MENU_CHAT = "💬 Chat Libre"
 MENU_CURRENCY = "💱 Convertisseur"
+MENU_FOOTBALL = "⚽ Football"
 MENU_HELP = "❓ Aide"
+
+# Sous-menu Football
+FOOTBALL_RESULTS = "📊 Résultats récents"
+FOOTBALL_STANDINGS = "🏆 Classement"
+FOOTBALL_TOP_SCORERS = "⚽ Top buteurs"
+FOOTBALL_TOP_ASSISTS = "🎯 Top passeurs"
+FOOTBALL_CHANGE_SEASON = "🗓️ Changer saison"
 
 # Actions de suivi
 WEATHER_OTHER_CITY = "🌤️ Autre ville"

@@ -32,6 +32,7 @@ def register_menu_handlers(bot: TeleBot):
             "📰  *Actualités* — résumé des dernières actualités par thème\n"
             "🗺️  *Itinéraire* — planification de trajets entre deux villes\n"
             "💱  *Convertisseur* — conversion de devises en temps réel\n"
+            "⚽  *Football* — résultats, calendrier, classement, prédictions\n"
             "💬  *Chat Libre* — discussion avec l'IA DeepSeek\n\n"
             "*Commandes*\n"
             "• /start — menu principal\n"

@@ -1,5 +1,6 @@
 from telebot import types
 
+from config import Config
 from utils.constants import (
     BACK_TO_MENU,
     MENU_METEO,
@@ -7,6 +8,7 @@ from utils.constants import (
     MENU_ROUTE,
     MENU_CHAT,
     MENU_CURRENCY,
+    MENU_FOOTBALL,
     MENU_HELP,
     WEATHER_OTHER_CITY,
     WEATHER_FAVORITE,
@@ -14,6 +16,11 @@ from utils.constants import (
     NEWS_DISCUSS,
     ROUTE_NEW,
     ROUTE_ALTERNATIVES,
+    FOOTBALL_RESULTS,
+    FOOTBALL_STANDINGS,
+    FOOTBALL_TOP_SCORERS,
+    FOOTBALL_TOP_ASSISTS,
+    FOOTBALL_CHANGE_SEASON,
 )
 
 
@@ -29,9 +36,37 @@ class Keyboards:
             types.KeyboardButton(MENU_ROUTE),
             types.KeyboardButton(MENU_CHAT),
             types.KeyboardButton(MENU_CURRENCY),
+            types.KeyboardButton(MENU_FOOTBALL),
             types.KeyboardButton(MENU_HELP),
         ]
         markup.add(*buttons)
+        return markup
+
+    @staticmethod
+    def football_menu():
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+        markup.add(
+            FOOTBALL_RESULTS, FOOTBALL_STANDINGS,
+            FOOTBALL_TOP_SCORERS, FOOTBALL_TOP_ASSISTS,
+        )
+        markup.add(FOOTBALL_CHANGE_SEASON)
+        markup.add(BACK_TO_MENU)
+        return markup
+
+    @staticmethod
+    def football_leagues():
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+        labels = list(Config.FOOTBALL_LEAGUES.keys())
+        markup.add(*labels)
+        markup.add(BACK_TO_MENU)
+        return markup
+
+    @staticmethod
+    def football_seasons():
+        from services.football_service import AVAILABLE_SEASONS
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=3)
+        markup.add(*[str(s) for s in AVAILABLE_SEASONS])
+        markup.add(BACK_TO_MENU)
         return markup
 
     @staticmethod

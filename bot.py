@@ -14,6 +14,7 @@ from handlers.actualites import register_news_handlers
 from handlers.itineraire import register_route_handlers
 from handlers.chat import register_chat_handlers
 from handlers.currency import register_currency_handlers
+from handlers.football import register_football_handlers
 from handlers.actions import register_action_handlers
 
 logger = get_logger(__name__)
@@ -39,6 +40,7 @@ class BotThematique:
         register_news_handlers(self.bot)
         register_route_handlers(self.bot)
         register_currency_handlers(self.bot)
+        register_football_handlers(self.bot)
         register_chat_handlers(self.bot)
         register_action_handlers(self.bot)
 

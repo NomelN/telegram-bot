@@ -16,12 +16,29 @@ class Config:
     OPENWEATHER_API_KEY = os.getenv('OPENWEATHER_API_KEY')
     NEWS_API_KEY = os.getenv('NEWS_API_KEY')
     EXCHANGE_RATE_API_KEY = os.getenv('EXCHANGE_RATE_API_KEY')
+    FOOTBALL_API_KEY = os.getenv('FOOTBALL_API_KEY')
 
     # Urls des API
     DEEPSEEK_BASE_URL = "https://api.deepseek.com"
     OPENWEATHER_URL = "https://api.openweathermap.org/data/2.5/weather"
     NEWS_API_URL = "https://newsapi.org/v2/everything"
     EXCHANGE_RATE_BASE_URL = "https://v6.exchangerate-api.com/v6"
+    FOOTBALL_BASE_URL = "https://v3.football.api-sports.io"
+    # Plan gratuit API-Football : seasons 2022-2024 uniquement.
+    # Ajustable via FOOTBALL_MAX_SEASON dans .env si tu changes d'offre.
+    FOOTBALL_MAX_SEASON = int(os.getenv('FOOTBALL_MAX_SEASON', 2024))
+
+    # Compétitions exposées (id API-Football, nom affiché, pays/scope)
+    FOOTBALL_LEAGUES = {
+        "🇫🇷 Ligue 1": 61,
+        "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League": 39,
+        "🇪🇸 La Liga": 140,
+        "🇩🇪 Bundesliga": 78,
+        "🇮🇹 Serie A": 135,
+        "🏆 Ligue des Champions": 2,
+        "🌍 CAN": 6,
+        "🌎 Coupe du Monde": 1,
+    }
 
     # Configuration
     MAX_HISTORY_LENGTH = int(os.getenv('MAX_HISTORY_LENGTH', 20))
@@ -37,6 +54,7 @@ class Config:
         "📰  *Actualités* — dernières news par thème\n"
         "🗺️  *Itinéraire* — planification de trajets\n"
         "💱  *Convertisseur* — conversion de devises\n"
+        "⚽  *Football* — résultats, calendrier, classement, prédictions\n"
         "💬  *Chat Libre* — discussion avec l'IA\n\n"
         "_Choisissez une option ci-dessous_ 👇"
     )
@@ -51,7 +69,7 @@ class Config:
             'OPENWEATHER_API_KEY',
             'EXCHANGE_RATE_API_KEY',
         ]
-        optional_keys = ['NEWS_API_KEY']
+        optional_keys = ['NEWS_API_KEY', 'FOOTBALL_API_KEY']
 
         missing = [key for key in required_keys if not getattr(cls, key)]
         if missing:

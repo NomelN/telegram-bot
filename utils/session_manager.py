@@ -16,6 +16,9 @@ class SessionMode(Enum):
     WAITING_CURRENCY_FROM = "waiting_currency_from"
     WAITING_CURRENCY_AMOUNT = "waiting_currency_amount"
     WAITING_CURRENCY_TO = "waiting_currency_to"
+    WAITING_FOOTBALL_ACTION = "waiting_football_action"
+    WAITING_FOOTBALL_LEAGUE = "waiting_football_league"
+    WAITING_FOOTBALL_SEASON = "waiting_football_season"
 
 class UserSession:
     """Gère les données de session d'un utilisateur"""
