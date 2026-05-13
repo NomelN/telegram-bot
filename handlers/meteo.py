@@ -3,6 +3,7 @@ from telebot import TeleBot
 from config import Config
 from keyboards import Keyboards
 from services.meteo_service import MeteoService
+from handlers.menu import show_main_menu
 from utils.session_manager import session_manager, SessionMode
 
 def ask_city(bot, msg):
@@ -64,5 +65,4 @@ def register_meteo_handlers(bot: TeleBot):
 
 def return_back_to_menu(bot, msg):
     """Retour au menu principal"""
-    from handlers.menu import show_main_menu
     show_main_menu(bot, msg)

@@ -1,11 +1,9 @@
 from telebot import TeleBot
 from config import Config
 from keyboards import Keyboards
-from services.deepseek_service import DeepSeekService
+from services import deepseek_service
+from handlers.menu import show_main_menu
 from utils.session_manager import session_manager, SessionMode
-
-# Initialiser le service DeepSeek
-deepseek_service = DeepSeekService()
 
 def register_route_handlers(bot: TeleBot):
     """Enregistre les handlers pour les itinéraires"""
@@ -28,7 +26,6 @@ def register_route_handlers(bot: TeleBot):
     def ask_arrival(msg):
         """Enregistre le départ et demande l'arrivée"""
         if msg.text == "🔙 Retour menu":
-            from handlers.menu import show_main_menu
             show_main_menu(bot, msg)
             return
         
@@ -53,7 +50,6 @@ def register_route_handlers(bot: TeleBot):
     def show_route(msg):
         """Affiche l'itinéraire entre les deux villes"""
         if msg.text == "🔙 Retour menu":
-            from handlers.menu import show_main_menu
             show_main_menu(bot, msg)
             return
         

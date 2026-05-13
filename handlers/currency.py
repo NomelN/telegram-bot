@@ -3,6 +3,7 @@ from telebot import TeleBot, types
 from config import Config
 from keyboards import Keyboards
 from services.currency_service import currency_service
+from handlers.menu import show_main_menu
 from utils.session_manager import session_manager, SessionMode
 
 
@@ -62,7 +63,6 @@ def register_currency_handlers(bot: TeleBot):
     def handle_currency_from(msg):
         """Traite la devise de départ choisie"""
         if msg.text == "🔙 Retour menu":
-            from handlers.menu import show_main_menu
             show_main_menu(bot, msg)
             return
         
@@ -117,7 +117,6 @@ def register_currency_handlers(bot: TeleBot):
     def handle_amount(msg):
         """Traite le montant à convertir"""
         if msg.text == "🔙 Retour menu":
-            from handlers.menu import show_main_menu
             show_main_menu(bot, msg)
             return
         
@@ -182,7 +181,6 @@ def register_currency_handlers(bot: TeleBot):
     def handle_currency_to(msg):
         """Traite la devise d'arrivée et affiche le résultat"""
         if msg.text == "🔙 Retour menu":
-            from handlers.menu import show_main_menu
             show_main_menu(bot, msg)
             return
         

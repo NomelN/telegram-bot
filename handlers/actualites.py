@@ -2,11 +2,9 @@
 from telebot import TeleBot
 from config import Config
 from keyboards import Keyboards
-from services.deepseek_service import DeepSeekService
+from services import deepseek_service
+from handlers.menu import show_main_menu
 from utils.session_manager import session_manager, SessionMode
-
-# Initialiser le service DeepSeek
-deepseek_service = DeepSeekService()
 
 def ask_theme(bot, msg):
     """Demande le thème des actualités (fonction exportable)"""
@@ -31,7 +29,6 @@ def register_news_handlers(bot: TeleBot):
     def show_news(msg):
         """Affiche les actualités pour le thème choisi"""
         if msg.text == "🔙 Retour menu":
-            from handlers.menu import show_main_menu
             show_main_menu(bot, msg)
             return
         

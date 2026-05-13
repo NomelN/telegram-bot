@@ -7,12 +7,13 @@ Version : 1.0.0
 
 import telebot
 from config import Config
-from handlers.menu import register_menu_handlers
+from handlers.menu import register_menu_handlers, show_main_menu
 from handlers.meteo import register_meteo_handlers
 from handlers.actualites import register_news_handlers
 from handlers.itineraire import register_route_handlers
 from handlers.chat import register_chat_handlers
 from handlers.currency import register_currency_handlers
+from handlers.actions import register_action_handlers
 
 class BotThematique:
     """Classe principale du bot"""
@@ -35,11 +36,10 @@ class BotThematique:
         register_route_handlers(self.bot)
         register_currency_handlers(self.bot)
         register_chat_handlers(self.bot)
-        
-        # Handler pour les messages non reconnus
+        register_action_handlers(self.bot)
+
         @self.bot.message_handler(func=lambda msg: True)
         def default_handler(msg):
-            from handlers.menu import show_main_menu
             show_main_menu(self.bot, msg)
     
     def run(self):

@@ -12,6 +12,7 @@ class DeepSeekService:
             api_key=Config.DEEPSEEK_API_KEY,
             base_url=Config.DEEPSEEK_BASE_URL
         )
+        self.news_service = NewsService()
     
     def generate_response(self, messages: list, temperature: float = None, max_tokens: int = None) -> str:
         """Génère une réponse via DeepSeek"""
@@ -31,16 +32,15 @@ class DeepSeekService:
 
         # 1. Essayer de récupérer de vraies actualités
         live_articles = []
-        news_service = NewsService()
         try:
-            live_articles = news_service.get_live_news(theme)
+            live_articles = self.news_service.get_live_news(theme)
         except Exception as e:
             print(f"Impossible d'utiliser NewsAPI: {e}")
 
         # 2. Créer le message pour DeepSeek
         if live_articles:
             # Si on a de vrais articles, on les donne comme contexte à l'IA
-            context = news_service.format_articles_for_ai(live_articles)
+            context = self.news_service.format_articles_for_ai(live_articles)
             prompt = f"""Tu es un journaliste qui doit faire un résumé de ces actualités.
             Voici les dernières nouvelles du {datetime.now().strftime('%d/%m/%Y')} pour le thème '{theme}' :
             
