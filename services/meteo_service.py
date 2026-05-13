@@ -29,14 +29,14 @@ class MeteoService:
         wind = data['wind']
         
         return f"""
-🌍 *Météo pour {city}*
+            🌍 *Météo pour {city}*
 
-🌡️ Température : {main['temp']}°C
-🤒 Ressenti : {main['feels_like']}°C
-💧 Humidité : {main['humidity']}%
-🌬️ Vent : {wind['speed']} km/h
-🌥️ Conditions : {weather['description'].capitalize()}
+            🌡️ Température : {main['temp']}°C
+            🤒 Ressenti : {main['feels_like']}°C
+            💧 Humidité : {main['humidity']}%
+            🌬️ Vent : {wind['speed']} km/h
+            🌥️ Conditions : {weather['description'].capitalize()}
 
-📊 Pression : {main['pressure']} hPa
-👁️ Visibilité : {data.get('visibility', 'N/A')} mètres
+            📊 Pression : {main['pressure']} hPa
+            👁️ Visibilité : {data.get('visibility', 'N/A')} mètres
         """
