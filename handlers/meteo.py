@@ -12,8 +12,10 @@ def ask_city(bot, msg):
     
     bot.send_message(
         msg.chat.id,
-        "📍 *Pour quelle ville voulez-vous la météo ?*\n\n"
-        "Tapez le nom d'une ville (ex: Paris, Lyon, New York...)",
+        "🌤️ *Météo*\n"
+        "━━━━━━━━━━━━━━━━━━━\n"
+        "Pour quelle ville ?\n\n"
+        "_Tapez un nom (ex: Paris, Lyon, New York…)_",
         parse_mode="Markdown",
         reply_markup=Keyboards.cities_suggestions()
     )

@@ -15,9 +15,10 @@ def register_route_handlers(bot: TeleBot):
         
         bot.send_message(
             msg.chat.id,
-            "🗺️ *Planifions votre itinéraire !*\n\n"
-            "📍 *Étape 1/2* : Quelle est votre *ville de départ* ?\n\n"
-            "Exemples : Paris, Lyon, Marseille...",
+            "🗺️ *Planification d'itinéraire*\n"
+            "━━━━━━━━━━━━━━━━━━━\n"
+            "*Étape 1/2* — Ville de départ\n\n"
+            "_Exemples : Paris, Lyon, Marseille…_",
             parse_mode="Markdown",
             reply_markup=Keyboards.back_to_menu()
         )
@@ -40,8 +41,9 @@ def register_route_handlers(bot: TeleBot):
         
         bot.send_message(
             msg.chat.id,
-            f"✅ Départ : *{departure}*\n\n"
-            "📍 *Étape 2/2* : Quelle est votre *ville d'arrivée* ?",
+            f"✅  Départ : *{departure}*\n\n"
+            "🗺️ *Étape 2/2* — Ville d'arrivée\n"
+            "━━━━━━━━━━━━━━━━━━━",
             parse_mode="Markdown",
             reply_markup=Keyboards.back_to_menu()
         )

@@ -19,13 +19,14 @@ def register_chat_handlers(bot: TeleBot):
 
         bot.send_message(
             msg.chat.id,
-            "💬 *Mode Chat Libre activé !*\n\n"
-            "Je suis votre assistant IA basé sur DeepSeek.\n"
-            "Posez-moi toutes vos questions, je ferai de mon mieux pour y répondre !\n\n"
-            "*Commandes disponibles :*\n"
-            "• Tapez 'Retour menu' pour revenir au menu principal\n"
-            "• Tapez 'Effacer' pour réinitialiser la conversation\n"
-            "• Tapez 'Historique' pour voir les derniers échanges\n\n"
+            "💬 *Chat Libre activé*\n"
+            "━━━━━━━━━━━━━━━━━━━\n"
+            "_Assistant IA basé sur DeepSeek._\n"
+            "Posez-moi vos questions, je fais de mon mieux !\n\n"
+            "*Commandes utiles*\n"
+            "• `Retour menu` — retour au menu principal\n"
+            "• `Effacer` — réinitialiser la conversation\n"
+            "• `Historique` — voir les derniers échanges\n\n"
             "Que voulez-vous savoir ? 😊",
             parse_mode="Markdown",
             reply_markup=Keyboards.back_to_menu()

@@ -12,8 +12,10 @@ def ask_theme(bot, msg):
     
     bot.send_message(
         msg.chat.id,
-        "📰 *Quel thème d'actualité vous intéresse ?*\n\n"
-        "Choisissez un thème ou tapez votre propre sujet.",
+        "📰 *Actualités*\n"
+        "━━━━━━━━━━━━━━━━━━━\n"
+        "Quel thème vous intéresse ?\n\n"
+        "_Choisissez ci-dessous ou tapez votre propre sujet._",
         parse_mode="Markdown",
         reply_markup=Keyboards.themes_actualites()
     )

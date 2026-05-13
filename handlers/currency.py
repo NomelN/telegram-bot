@@ -49,12 +49,12 @@ def register_currency_handlers(bot: TeleBot):
         
         bot.send_message(
             msg.chat.id,
-            "💱 *Convertisseur de devises - Étape 1/3*\n\n"
-            "*Choisissez la devise de départ :*\n\n"
-            "Vous pouvez :\n"
-            "• Cliquer sur un bouton ci-dessous\n"
-            "• Ou taper le code devise (ex: EUR, USD, GBP)\n"
-            "• Ou écrire le nom (ex: euro, dollar, livre)",
+            "💱 *Convertisseur de devises*\n"
+            "━━━━━━━━━━━━━━━━━━━\n"
+            "*Étape 1/3* — Devise de départ\n\n"
+            "Choisissez ci-dessous, ou tapez :\n"
+            "• un *code ISO* (ex: EUR, USD, GBP)\n"
+            "• un *nom* (ex: euro, dollar, livre)",
             parse_mode="Markdown",
             reply_markup=markup
         )
@@ -106,9 +106,10 @@ def register_currency_handlers(bot: TeleBot):
         
         bot.send_message(
             msg.chat.id,
-            f"✅ Devise de départ : *{from_currency}* ({from_name})\n\n"
-            "💱 *Étape 2/3 : Quel montant voulez-vous convertir ?*\n\n"
-            "Tapez un nombre (ex: 100, 50.50) ou choisissez un montant rapide :",
+            f"✅  Devise de départ : *{from_currency}* — {from_name}\n\n"
+            "💱 *Étape 2/3* — Montant\n"
+            "━━━━━━━━━━━━━━━━━━━\n"
+            "Tapez un nombre (ex: `100`, `50.50`) ou choisissez ci-dessous :",
             parse_mode="Markdown",
             reply_markup=markup
         )
@@ -170,9 +171,10 @@ def register_currency_handlers(bot: TeleBot):
         
         bot.send_message(
             msg.chat.id,
-            f"✅ Départ : *{amount} {from_currency}* ({from_name})\n\n"
-            "💱 *Étape 3/3 : Choisissez la devise d'arrivée :*\n\n"
-            "Cliquez sur un bouton ou tapez un code devise (ex: USD, EUR, GBP)",
+            f"✅  Montant : *{amount:g} {from_currency}* — {from_name}\n\n"
+            "💱 *Étape 3/3* — Devise d'arrivée\n"
+            "━━━━━━━━━━━━━━━━━━━\n"
+            "Choisissez ci-dessous ou tapez un code (ex: USD, EUR, GBP)",
             parse_mode="Markdown",
             reply_markup=markup
         )
@@ -222,27 +224,17 @@ def register_currency_handlers(bot: TeleBot):
             common = currency_service.get_common_currencies()
             from_name = common.get(result["from"], result["from"])
             to_name = common.get(result["to"], result["to"])
-            from_symbol = get_currency_symbol(result["from"])
-            to_symbol = get_currency_symbol(result["to"])
-            
-            message = f"""
-💱 *Conversion réussie !*
 
-┌─────────────────────────┐
-│ *Départ*   │ {result['amount']} {from_symbol} {result['from']}
-│ *{from_name}*
-│
-│ Taux : 1 {result['from']} = {result['rate']} {result['to']}
-│
-│ *Résultat* │ *{result['result']} {to_symbol} {result['to']}*
-│ *{to_name}*
-└─────────────────────────┘
-
-📅 Taux du : {result['date']}
-🔄 Mis à jour quotidiennement
-
-*Que voulez-vous faire ?*
-            """
+            message = (
+                "💱 *Conversion réussie*\n"
+                "━━━━━━━━━━━━━━━━━━━\n\n"
+                f"💸  *{result['amount']:g} {result['from']}* ({from_name})\n"
+                f"     ↓\n"
+                f"💰  *{result['result']:g} {result['to']}* ({to_name})\n\n"
+                f"📈  *Taux* : 1 {result['from']} = {result['rate']:g} {result['to']}\n"
+                f"📅  *Date* : {result['date']}\n\n"
+                "_Mis à jour quotidiennement_"
+            )
             
             bot.edit_message_text(
                 message,
@@ -303,22 +295,28 @@ def register_currency_handlers(bot: TeleBot):
             bot.edit_message_text("❌ Impossible de récupérer les taux", msg.chat.id, loading_msg.message_id)
             return
         
-        rates = rates_data.get("rates", {})
-        date = rates_data.get("date", "N/A")
-        
+        rates = rates_data.get("conversion_rates", {})
+        date = rates_data.get("time_last_update_utc", "N/A")[:16]
+
         main_currencies = ["USD", "GBP", "CHF", "JPY", "CAD", "XOF", "MAD", "DZD", "CNY", "AUD", "TND"]
-        
-        message = f"📊 *Taux de change du {date}*\n"
-        message += "*Base : 1 EUR (€)*\n\n"
-        
+
+        lines = [
+            "📊 *Taux de change du jour*",
+            "━━━━━━━━━━━━━━━━━━━",
+            "_Base : 1 EUR (€)_",
+            "",
+        ]
         common = currency_service.get_common_currencies()
         for currency in main_currencies:
             if currency in rates:
-                name = common.get(currency, currency)
                 symbol = get_currency_symbol(currency)
-                message += f"• {symbol} {currency} : *{rates[currency]}*\n"
-        
-        message += "\n_💡 Pour convertir, tapez '💱 Nouvelle conversion'_"
+                lines.append(f"• {symbol:>4}  *{currency}*  →  {rates[currency]:g}")
+
+        lines.append("")
+        lines.append(f"📅  _{date}_")
+        lines.append("")
+        lines.append("_💡 Tapez « 💱 Nouvelle conversion » pour convertir_")
+        message = "\n".join(lines)
         
         bot.edit_message_text(
             message,

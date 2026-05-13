@@ -24,32 +24,20 @@ def register_menu_handlers(bot: TeleBot):
     @bot.message_handler(commands=['help'])
     @bot.message_handler(func=lambda msg: msg.text == "❓ Aide")
     def help(msg):
-        help_text = """
-            🤖 *Guide d'utilisation*
-
-            *Fonctionnalités :*
-
-            🌤️ *Météo*
-            → Météo en temps réel pour n'importe quelle ville
-
-            📰 *Actualités*
-            → Résumé des dernières actualités par thème
-
-            🗺️ *Itinéraire*
-            → Planification de trajets entre deux villes
-            
-            💱 *Convertisseur*
-            → Conversion de devises en temps réel
-
-            💬 *Chat Libre*
-            → Discussion avec l'IA DeepSeek
-
-            *Commandes :*
-            /start - Menu principal
-            /help - Ce message d'aide
-
-            *Besoin d'aide ?* Contactez l'administrateur
-        """
+        help_text = (
+            "🤖 *Guide d'utilisation*\n"
+            "━━━━━━━━━━━━━━━━━━━\n\n"
+            "*Fonctionnalités*\n\n"
+            "🌤️  *Météo* — météo en temps réel pour n'importe quelle ville\n"
+            "📰  *Actualités* — résumé des dernières actualités par thème\n"
+            "🗺️  *Itinéraire* — planification de trajets entre deux villes\n"
+            "💱  *Convertisseur* — conversion de devises en temps réel\n"
+            "💬  *Chat Libre* — discussion avec l'IA DeepSeek\n\n"
+            "*Commandes*\n"
+            "• /start — menu principal\n"
+            "• /help — ce message d'aide\n\n"
+            "_Besoin d'aide ?_ Contactez l'administrateur."
+        )
         bot.send_message(msg.chat.id, help_text, parse_mode="Markdown")
     
     @bot.message_handler(func=lambda msg: msg.text == "🔙 Retour menu")

@@ -29,19 +29,17 @@ class Config:
     MAX_TOKENS = int(os.getenv("MAX_TOKENS", 1000))
 
     # Messages
-    WELCOME_MESSAGE = """
-        🤖 *Assistant IA Thématique*
-
-        *Fonctionnalités disponibles :*
-        • 🌤️ Météo : Météo en temps réel
-        • 📰 Actualités : Dernières news par thème
-        • 🗺️ Itinéraire : Planification de trajets
-        • 💱 Convertisseur : Conversion de devises
-        • 💬 Chat Libre : Discussion avec l'IA
-
-
-        Choisissez une option ci-dessous :
-    """
+    WELCOME_MESSAGE = (
+        "🤖 *Assistant IA Thématique*\n"
+        "━━━━━━━━━━━━━━━━━━━\n\n"
+        "*Que puis-je faire pour vous ?*\n\n"
+        "🌤️  *Météo* — en temps réel, n'importe quelle ville\n"
+        "📰  *Actualités* — dernières news par thème\n"
+        "🗺️  *Itinéraire* — planification de trajets\n"
+        "💱  *Convertisseur* — conversion de devises\n"
+        "💬  *Chat Libre* — discussion avec l'IA\n\n"
+        "_Choisissez une option ci-dessous_ 👇"
+    )
 
     @classmethod
     def validate(cls):

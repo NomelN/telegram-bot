@@ -27,16 +27,17 @@ class MeteoService:
         main = data['main']
         weather = data['weather'][0]
         wind = data['wind']
-        
-        return f"""
-            🌍 *Météo pour {city}*
+        visibility = data.get('visibility')
+        visibility_str = f"{visibility / 1000:.1f} km" if isinstance(visibility, (int, float)) else "N/A"
 
-            🌡️ Température : {main['temp']}°C
-            🤒 Ressenti : {main['feels_like']}°C
-            💧 Humidité : {main['humidity']}%
-            🌬️ Vent : {wind['speed']} km/h
-            🌥️ Conditions : {weather['description'].capitalize()}
-
-            📊 Pression : {main['pressure']} hPa
-            👁️ Visibilité : {data.get('visibility', 'N/A')} mètres
-        """
+        return (
+            f"🌍 *Météo — {city.title()}*\n"
+            f"━━━━━━━━━━━━━━━━━━━\n"
+            f"_{weather['description'].capitalize()}_\n\n"
+            f"🌡️  *Température* : {main['temp']:.1f} °C\n"
+            f"🤒  *Ressenti* : {main['feels_like']:.1f} °C\n"
+            f"💧  *Humidité* : {main['humidity']} %\n"
+            f"🌬️  *Vent* : {wind['speed']} m/s\n\n"
+            f"📊  *Pression* : {main['pressure']} hPa\n"
+            f"👁️  *Visibilité* : {visibility_str}"
+        )
