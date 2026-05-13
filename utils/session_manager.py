@@ -10,6 +10,9 @@ class SessionMode(Enum):
     WAITING_ARRIVAL = "waiting_arrival"
     CHAT_FREE = "chat_free"
     WAITING_ACTION = "waiting_action"
+    WAITING_CURRENCY_FROM = "waiting_currency_from"
+    WAITING_CURRENCY_AMOUNT = "waiting_currency_amount"
+    WAITING_CURRENCY_TO = "waiting_currency_to"
 
 class UserSession:
     """Gère les données de session d'un utilisateur"""

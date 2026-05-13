@@ -12,6 +12,7 @@ from handlers.meteo import register_meteo_handlers
 from handlers.actualites import register_news_handlers
 from handlers.itineraire import register_route_handlers
 from handlers.chat import register_chat_handlers
+from handlers.currency import register_currency_handlers
 
 class BotThematique:
     """Classe principale du bot"""
@@ -32,6 +33,7 @@ class BotThematique:
         register_meteo_handlers(self.bot)
         register_news_handlers(self.bot)
         register_route_handlers(self.bot)
+        register_currency_handlers(self.bot)
         register_chat_handlers(self.bot)
         
         # Handler pour les messages non reconnus

@@ -13,6 +13,7 @@ class Keyboards:
             types.KeyboardButton("📰 Actualités"),
             types.KeyboardButton("🗺️ Itinéraire"),
             types.KeyboardButton("💬 Chat Libre"),
+            types.KeyboardButton("💱 Convertisseur"),
             types.KeyboardButton("❓ Aide")
         ]
         

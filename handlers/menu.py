@@ -37,6 +37,9 @@ def register_menu_handlers(bot: TeleBot):
 
             🗺️ *Itinéraire*
             → Planification de trajets entre deux villes
+            
+            💱 *Convertisseur*
+            → Conversion de devises en temps réel
 
             💬 *Chat Libre*
             → Discussion avec l'IA DeepSeek
