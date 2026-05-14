@@ -1,6 +1,14 @@
-"""Service API-Football (v3, point d'accès direct api-sports.io)."""
+"""Service API-Football (v3, point d'accès direct api-sports.io).
 
+Notes plan gratuit :
+- Seasons 2022-2024 uniquement
+- ?last / ?next interdits → on récupère + on filtre côté client
+- ?search ne tolère ni 'league' ni 'season', ni caractères spéciaux
+"""
+
+import re
 import requests
+import unicodedata
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -17,6 +25,19 @@ def current_season() -> int:
     now = datetime.now()
     natural = now.year if now.month >= 7 else now.year - 1
     return min(natural, Config.FOOTBALL_MAX_SEASON)
+
+
+def _sanitize_search(name: str) -> str:
+    """Retire accents et caractères non alphanumériques (contrainte API)."""
+    if not name:
+        return ""
+    nfkd = unicodedata.normalize("NFKD", name)
+    no_accents = "".join(c for c in nfkd if not unicodedata.combining(c))
+    return re.sub(r"[^A-Za-z0-9 ]", " ", no_accents).strip()
+
+
+def _fixture_date(fx: dict) -> str:
+    return fx.get("fixture", {}).get("date", "")
 
 
 class FootballService:
@@ -59,14 +80,6 @@ class FootballService:
             logger.exception("Erreur réseau API-Football: %s", e)
             return None
 
-    def get_recent_results(self, league_id: int, season: Optional[int] = None, limit: int = 5) -> list[dict]:
-        data = self._get("fixtures", {
-            "league": league_id,
-            "season": season or current_season(),
-            "last": limit,
-        })
-        return data.get("response", []) if data else []
-
     def get_standings(self, league_id: int, season: Optional[int] = None) -> list[dict]:
         data = self._get("standings", {
             "league": league_id,
@@ -91,3 +104,34 @@ class FootballService:
             "season": season or current_season(),
         })
         return data.get("response", []) if data else []
+
+    def search_teams(self, name: str, limit: int = 5) -> list[dict]:
+        """Recherche d'équipes par nom (top N). Le plan gratuit n'accepte ni
+        league ni season en combinaison avec search."""
+        cleaned = _sanitize_search(name)
+        if len(cleaned) < 3:
+            return []
+        data = self._get("teams", {"search": cleaned})
+        if not data or not data.get("response"):
+            return []
+        return [r["team"] for r in data["response"][:limit] if r.get("team")]
+
+    def get_team_statistics(self, team_id: int, league_id: int, season: Optional[int] = None) -> Optional[dict]:
+        data = self._get("teams/statistics", {
+            "team": team_id,
+            "league": league_id,
+            "season": season or current_season(),
+        })
+        if not data:
+            return None
+        return data.get("response") or None
+
+    def get_h2h(self, team_id_1: int, team_id_2: int, limit: int = 10) -> list[dict]:
+        """Confrontations directes (tri côté client car ?last interdit)."""
+        data = self._get("fixtures/headtohead", {
+            "h2h": f"{team_id_1}-{team_id_2}",
+        })
+        fixtures = data.get("response", []) if data else []
+        fixtures.sort(key=_fixture_date, reverse=True)
+        return fixtures[:limit]
+

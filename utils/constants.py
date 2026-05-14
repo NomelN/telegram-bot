@@ -13,10 +13,11 @@ MENU_FOOTBALL = "⚽ Football"
 MENU_HELP = "❓ Aide"
 
 # Sous-menu Football
-FOOTBALL_RESULTS = "📊 Résultats récents"
 FOOTBALL_STANDINGS = "🏆 Classement"
 FOOTBALL_TOP_SCORERS = "⚽ Top buteurs"
 FOOTBALL_TOP_ASSISTS = "🎯 Top passeurs"
+FOOTBALL_TEAM_STATS = "📈 Stats d'équipe"
+FOOTBALL_H2H = "⚔️ Confrontations"
 FOOTBALL_CHANGE_SEASON = "🗓️ Changer saison"
 
 # Actions de suivi

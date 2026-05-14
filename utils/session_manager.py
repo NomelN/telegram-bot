@@ -19,6 +19,10 @@ class SessionMode(Enum):
     WAITING_FOOTBALL_ACTION = "waiting_football_action"
     WAITING_FOOTBALL_LEAGUE = "waiting_football_league"
     WAITING_FOOTBALL_SEASON = "waiting_football_season"
+    WAITING_FOOTBALL_STATS_TEAM = "waiting_football_stats_team"
+    WAITING_FOOTBALL_H2H_TEAM1 = "waiting_football_h2h_team1"
+    WAITING_FOOTBALL_H2H_TEAM2 = "waiting_football_h2h_team2"
+    WAITING_FOOTBALL_TEAM_PICK = "waiting_football_team_pick"
 
 class UserSession:
     """Gère les données de session d'un utilisateur"""

@@ -16,10 +16,11 @@ from utils.constants import (
     NEWS_DISCUSS,
     ROUTE_NEW,
     ROUTE_ALTERNATIVES,
-    FOOTBALL_RESULTS,
     FOOTBALL_STANDINGS,
     FOOTBALL_TOP_SCORERS,
     FOOTBALL_TOP_ASSISTS,
+    FOOTBALL_TEAM_STATS,
+    FOOTBALL_H2H,
     FOOTBALL_CHANGE_SEASON,
 )
 
@@ -46,8 +47,9 @@ class Keyboards:
     def football_menu():
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
         markup.add(
-            FOOTBALL_RESULTS, FOOTBALL_STANDINGS,
+            FOOTBALL_STANDINGS, FOOTBALL_TEAM_STATS,
             FOOTBALL_TOP_SCORERS, FOOTBALL_TOP_ASSISTS,
+            FOOTBALL_H2H,
         )
         markup.add(FOOTBALL_CHANGE_SEASON)
         markup.add(BACK_TO_MENU)
