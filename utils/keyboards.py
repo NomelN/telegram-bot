@@ -5,7 +5,6 @@ from utils.constants import (
     BACK_TO_MENU,
     MENU_METEO,
     MENU_NEWS,
-    MENU_ROUTE,
     MENU_CHAT,
     MENU_CURRENCY,
     MENU_FOOTBALL,
@@ -14,8 +13,6 @@ from utils.constants import (
     WEATHER_FAVORITE,
     NEWS_OTHER_THEME,
     NEWS_DISCUSS,
-    ROUTE_NEW,
-    ROUTE_ALTERNATIVES,
     FOOTBALL_STANDINGS,
     FOOTBALL_TOP_SCORERS,
     FOOTBALL_TOP_ASSISTS,
@@ -39,10 +36,9 @@ class Keyboards:
         buttons = [
             types.KeyboardButton(MENU_METEO),
             types.KeyboardButton(MENU_NEWS),
-            types.KeyboardButton(MENU_ROUTE),
-            types.KeyboardButton(MENU_CHAT),
             types.KeyboardButton(MENU_CURRENCY),
             types.KeyboardButton(MENU_FOOTBALL),
+            types.KeyboardButton(MENU_CHAT),
             types.KeyboardButton(MENU_HELP),
         ]
         markup.add(*buttons)
@@ -128,10 +124,4 @@ class Keyboards:
     def after_news_actions():
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         markup.add(NEWS_OTHER_THEME, NEWS_DISCUSS, BACK_TO_MENU)
-        return markup
-
-    @staticmethod
-    def after_route_actions():
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        markup.add(ROUTE_NEW, ROUTE_ALTERNATIVES, BACK_TO_MENU)
         return markup

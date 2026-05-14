@@ -10,7 +10,6 @@ Bot Telegram multi-fonctions écrit en Python, qui combine plusieurs API externe
 |---|---|---|
 | 🌤️ **Météo** | Météo en temps réel pour n'importe quelle ville | OpenWeather |
 | 📰 **Actualités** | Résumé des dernières actualités par thème | NewsAPI + DeepSeek |
-| 🗺️ **Itinéraire** | Planification de trajets entre deux villes | DeepSeek |
 | 💱 **Convertisseur** | Conversion de devises en temps réel (taux quotidiens) | ExchangeRate-API V6 |
 | ⚽ **Football** | Classements, top buteurs, stats d'équipe, confrontations, matchs du jour, classement live | API-Football + football-data.org |
 | 💬 **Chat Libre** | Discussion ouverte avec l'IA | DeepSeek |
@@ -109,7 +108,6 @@ bot-telegram/
 │   ├── menu.py                 # Menu principal, /start, /help
 │   ├── meteo.py                # Météo
 │   ├── actualites.py           # Actualités
-│   ├── itineraire.py           # Itinéraire
 │   ├── currency.py             # Convertisseur de devises
 │   ├── football.py             # Football (multi-API)
 │   ├── chat.py                 # Chat libre IA

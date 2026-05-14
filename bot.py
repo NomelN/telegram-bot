@@ -11,7 +11,6 @@ from utils.logger import setup_logging, get_logger
 from handlers.menu import register_menu_handlers, show_main_menu
 from handlers.meteo import register_meteo_handlers
 from handlers.actualites import register_news_handlers
-from handlers.itineraire import register_route_handlers
 from handlers.chat import register_chat_handlers
 from handlers.currency import register_currency_handlers
 from handlers.football import register_football_handlers
@@ -38,7 +37,6 @@ class BotThematique:
         register_menu_handlers(self.bot)
         register_meteo_handlers(self.bot)
         register_news_handlers(self.bot)
-        register_route_handlers(self.bot)
         register_currency_handlers(self.bot)
         register_football_handlers(self.bot)
         register_chat_handlers(self.bot)

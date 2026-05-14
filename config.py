@@ -64,9 +64,8 @@ class Config:
         "*Que puis-je faire pour vous ?*\n\n"
         "🌤️  *Météo* — en temps réel, n'importe quelle ville\n"
         "📰  *Actualités* — dernières news par thème\n"
-        "🗺️  *Itinéraire* — planification de trajets\n"
         "💱  *Convertisseur* — conversion de devises\n"
-        "⚽  *Football* — résultats, calendrier, classement, prédictions\n"
+        "⚽  *Football* — classement, stats, top buteurs, matchs du jour\n"
         "💬  *Chat Libre* — discussion avec l'IA\n\n"
         "_Choisissez une option ci-dessous_ 👇"
     )
