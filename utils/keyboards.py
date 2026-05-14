@@ -22,6 +22,11 @@ from utils.constants import (
     FOOTBALL_TEAM_STATS,
     FOOTBALL_H2H,
     FOOTBALL_CHANGE_SEASON,
+    FOOTBALL_LIVE_ENTRY,
+    FOOTBALL_LIVE_MATCHES,
+    FOOTBALL_LIVE_STANDINGS,
+    FOOTBALL_LIVE_SCORERS,
+    FOOTBALL_LIVE_MATCHDAY,
 )
 
 
@@ -51,7 +56,25 @@ class Keyboards:
             FOOTBALL_TOP_SCORERS, FOOTBALL_TOP_ASSISTS,
             FOOTBALL_H2H,
         )
+        markup.add(FOOTBALL_LIVE_ENTRY)
         markup.add(FOOTBALL_CHANGE_SEASON)
+        markup.add(BACK_TO_MENU)
+        return markup
+
+    @staticmethod
+    def football_live_menu():
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+        markup.add(
+            FOOTBALL_LIVE_MATCHES, FOOTBALL_LIVE_STANDINGS,
+            FOOTBALL_LIVE_SCORERS, FOOTBALL_LIVE_MATCHDAY,
+        )
+        markup.add(BACK_TO_MENU)
+        return markup
+
+    @staticmethod
+    def football_live_competitions():
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+        markup.add(*list(Config.FOOTBALL_DATA_COMPETITIONS.keys()))
         markup.add(BACK_TO_MENU)
         return markup
 

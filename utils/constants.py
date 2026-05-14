@@ -20,6 +20,13 @@ FOOTBALL_TEAM_STATS = "📈 Stats d'équipe"
 FOOTBALL_H2H = "⚔️ Confrontations"
 FOOTBALL_CHANGE_SEASON = "🗓️ Changer saison"
 
+# Sous-menu Saison actuelle (football-data.org)
+FOOTBALL_LIVE_ENTRY = "📡 Saison actuelle"
+FOOTBALL_LIVE_MATCHES = "🗓️ Matchs du jour"
+FOOTBALL_LIVE_STANDINGS = "🏆 Classement live"
+FOOTBALL_LIVE_SCORERS = "⚽ Top buteurs live"
+FOOTBALL_LIVE_MATCHDAY = "📅 Journée en cours"
+
 # Actions de suivi
 WEATHER_OTHER_CITY = "🌤️ Autre ville"
 WEATHER_FAVORITE = "📍 Météo favorite"

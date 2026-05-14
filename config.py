@@ -17,6 +17,7 @@ class Config:
     NEWS_API_KEY = os.getenv('NEWS_API_KEY')
     EXCHANGE_RATE_API_KEY = os.getenv('EXCHANGE_RATE_API_KEY')
     FOOTBALL_API_KEY = os.getenv('FOOTBALL_API_KEY')
+    FOOTBALL_DATA_API_KEY = os.getenv('FOOTBALL_DATA_API_KEY')
 
     # Urls des API
     DEEPSEEK_BASE_URL = "https://api.deepseek.com"
@@ -24,9 +25,20 @@ class Config:
     NEWS_API_URL = "https://newsapi.org/v2/everything"
     EXCHANGE_RATE_BASE_URL = "https://v6.exchangerate-api.com/v6"
     FOOTBALL_BASE_URL = "https://v3.football.api-sports.io"
+    FOOTBALL_DATA_BASE_URL = "https://api.football-data.org/v4"
     # Plan gratuit API-Football : seasons 2022-2024 uniquement.
     # Ajustable via FOOTBALL_MAX_SEASON dans .env si tu changes d'offre.
     FOOTBALL_MAX_SEASON = int(os.getenv('FOOTBALL_MAX_SEASON', 2024))
+
+    # Compétitions football-data.org (codes officiels, plan gratuit)
+    FOOTBALL_DATA_COMPETITIONS = {
+        "🇫🇷 Ligue 1": "FL1",
+        "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League": "PL",
+        "🇪🇸 La Liga": "PD",
+        "🇩🇪 Bundesliga": "BL1",
+        "🇮🇹 Serie A": "SA",
+        "🏆 Ligue des Champions": "CL",
+    }
 
     # Compétitions exposées (id API-Football, nom affiché, pays/scope)
     FOOTBALL_LEAGUES = {
@@ -69,7 +81,7 @@ class Config:
             'OPENWEATHER_API_KEY',
             'EXCHANGE_RATE_API_KEY',
         ]
-        optional_keys = ['NEWS_API_KEY', 'FOOTBALL_API_KEY']
+        optional_keys = ['NEWS_API_KEY', 'FOOTBALL_API_KEY', 'FOOTBALL_DATA_API_KEY']
 
         missing = [key for key in required_keys if not getattr(cls, key)]
         if missing:

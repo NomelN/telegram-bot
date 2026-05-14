@@ -1,9 +1,10 @@
 # pyrefly: ignore [missing-import]
+from datetime import datetime
 from telebot import TeleBot, types
 
 from config import Config
 from handlers.menu import show_main_menu
-from services import football_service
+from services import football_service, football_data_service
 from services.football_service import AVAILABLE_SEASONS, current_season
 from utils.constants import (
     BACK_TO_MENU,
@@ -13,6 +14,11 @@ from utils.constants import (
     FOOTBALL_TEAM_STATS,
     FOOTBALL_H2H,
     FOOTBALL_CHANGE_SEASON,
+    FOOTBALL_LIVE_ENTRY,
+    FOOTBALL_LIVE_MATCHES,
+    FOOTBALL_LIVE_STANDINGS,
+    FOOTBALL_LIVE_SCORERS,
+    FOOTBALL_LIVE_MATCHDAY,
 )
 from utils.keyboards import Keyboards
 from utils.logger import get_logger
@@ -169,6 +175,148 @@ def _format_h2h(team1: dict, team2: dict, fixtures: list) -> str:
         f"• Nuls : {draws}\n\n"
         f"📅  *Derniers matchs*\n{history}"
     )
+
+
+# ─────────────── Saison actuelle (football-data.org) ───────────────
+
+_STATUS_EMOJI = {
+    "SCHEDULED": "📅",
+    "TIMED": "📅",
+    "IN_PLAY": "🔴",
+    "LIVE": "🔴",
+    "PAUSED": "⏸️",
+    "FINISHED": "✅",
+    "POSTPONED": "⏳",
+    "SUSPENDED": "🚫",
+    "CANCELLED": "❌",
+}
+
+
+def _fdo_match_time(utc_iso: str) -> str:
+    try:
+        dt = datetime.fromisoformat(utc_iso.replace("Z", "+00:00"))
+        return dt.strftime("%H:%M")
+    except (ValueError, AttributeError):
+        return "?"
+
+
+def _fdo_match_line(m: dict) -> str:
+    status = m.get("status", "?")
+    emoji = _STATUS_EMOJI.get(status, "•")
+    home = m.get("homeTeam", {}).get("shortName") or m.get("homeTeam", {}).get("name", "?")
+    away = m.get("awayTeam", {}).get("shortName") or m.get("awayTeam", {}).get("name", "?")
+    score = m.get("score", {}).get("fullTime", {}) or {}
+    h, a = score.get("home"), score.get("away")
+    if status in {"FINISHED", "IN_PLAY", "LIVE", "PAUSED"} and h is not None:
+        return f"{emoji} *{home}* {h}–{a} *{away}*"
+    return f"{emoji} `{_fdo_match_time(m.get('utcDate', ''))}`  {home} vs {away}"
+
+
+def _format_today_matches(matches: list) -> str:
+    if not matches:
+        return f"_Aucun match aujourd'hui sur les compétitions du plan._"
+    # Grouper par compétition
+    by_comp: dict = {}
+    for m in matches:
+        comp = m.get("competition", {}).get("name", "?")
+        by_comp.setdefault(comp, []).append(m)
+
+    lines = [f"🗓️ *Matchs du jour*", SEPARATOR]
+    for comp, group in by_comp.items():
+        lines.append(f"\n*{comp}*")
+        group.sort(key=lambda x: x.get("utcDate", ""))
+        for m in group:
+            lines.append(_fdo_match_line(m))
+    return "\n".join(lines)
+
+
+def _format_fdo_standings(rows: list, comp_label: str) -> str:
+    if not rows:
+        return f"_Classement indisponible pour {comp_label}._"
+    lines = [f"🏆 *Classement — {comp_label}*", "_Saison en cours_", SEPARATOR,
+             "`#   Équipe          J   V  N  D  Pts`"]
+    for row in rows[:20]:
+        pos = row.get("position", "?")
+        team = (row.get("team", {}).get("shortName") or row.get("team", {}).get("name", "?"))[:14]
+        played = row.get("playedGames", 0)
+        won = row.get("won", 0)
+        draw = row.get("draw", 0)
+        lost = row.get("lost", 0)
+        pts = row.get("points", 0)
+        lines.append(f"`{pos:>2}  {team:<14} {played:>3} {won:>2} {draw:>2} {lost:>2}  {pts:>3}`")
+    return "\n".join(lines)
+
+
+def _format_fdo_scorers(rows: list, comp_label: str) -> str:
+    if not rows:
+        return f"_Top buteurs indisponibles pour {comp_label}._"
+    lines = [f"⚽ *Top buteurs — {comp_label}*", "_Saison en cours_", SEPARATOR,
+             "`#   Joueur              Équipe          Buts`"]
+    for i, row in enumerate(rows[:15], 1):
+        player = row.get("player", {}).get("name", "?")[:18]
+        team = (row.get("team", {}).get("shortName") or row.get("team", {}).get("name", "?"))[:14]
+        goals = row.get("goals") or 0
+        lines.append(f"`{i:>2}  {player:<18} {team:<14} {goals:>4}`")
+    return "\n".join(lines)
+
+
+def _format_matchday(matches: list, comp_label: str) -> str:
+    if not matches:
+        return f"_Aucun match en cours pour {comp_label}._"
+    matchday = matches[0].get("matchday", "?")
+    lines = [f"📅 *{comp_label} — Journée {matchday}*", SEPARATOR]
+    matches.sort(key=lambda x: x.get("utcDate", ""))
+    for m in matches:
+        try:
+            dt = datetime.fromisoformat(m.get("utcDate", "").replace("Z", "+00:00"))
+            date = dt.strftime("%d/%m %H:%M")
+        except (ValueError, AttributeError):
+            date = "?"
+        home = m.get("homeTeam", {}).get("shortName") or m.get("homeTeam", {}).get("name", "?")
+        away = m.get("awayTeam", {}).get("shortName") or m.get("awayTeam", {}).get("name", "?")
+        status = m.get("status", "?")
+        emoji = _STATUS_EMOJI.get(status, "•")
+        score = m.get("score", {}).get("fullTime", {}) or {}
+        h, a = score.get("home"), score.get("away")
+        if status in {"FINISHED", "IN_PLAY", "LIVE"} and h is not None:
+            lines.append(f"{emoji} `{date}`  *{home}* {h}–{a} *{away}*")
+        else:
+            lines.append(f"{emoji} `{date}`  {home} vs {away}")
+    return "\n".join(lines)
+
+
+def ask_football_live_action(bot: TeleBot, msg):
+    """Sous-menu Saison actuelle (football-data.org)."""
+    session_manager.set_mode(msg.chat.id, SessionMode.WAITING_FOOTBALL_LIVE_ACTION)
+    bot.send_message(
+        msg.chat.id,
+        f"📡 *Saison actuelle*\n{SEPARATOR}\n"
+        "_Données live de football-data.org._\n"
+        "Que voulez-vous consulter ?",
+        parse_mode="Markdown",
+        reply_markup=Keyboards.football_live_menu(),
+    )
+
+
+def _render_live(bot: TeleBot, msg, action: str, comp_code: str, comp_label: str):
+    loading = bot.send_message(msg.chat.id, "🔍 Récupération des données…")
+    try:
+        if action == FOOTBALL_LIVE_STANDINGS:
+            rows = football_data_service.get_standings(comp_code)
+            text = _format_fdo_standings(rows, comp_label)
+        elif action == FOOTBALL_LIVE_SCORERS:
+            rows = football_data_service.get_top_scorers(comp_code)
+            text = _format_fdo_scorers(rows, comp_label)
+        elif action == FOOTBALL_LIVE_MATCHDAY:
+            matches = football_data_service.get_current_matchday(comp_code)
+            text = _format_matchday(matches, comp_label)
+        else:
+            text = "_Action inconnue._"
+        bot.edit_message_text(text, msg.chat.id, loading.message_id, parse_mode="Markdown")
+    except Exception as e:
+        logger.exception("Erreur football-data : %s", e)
+        bot.edit_message_text(f"❌ Erreur : {e}", msg.chat.id, loading.message_id)
+    ask_football_live_action(bot, msg)
 
 
 # ─────────────── UI ───────────────
@@ -443,6 +591,63 @@ def register_football_handlers(bot: TeleBot):
     )
     def h2h_team2_input(msg):
         _resolve_team_input(bot, msg, PENDING_H2H_2)
+
+    # — Saison actuelle (football-data.org)
+    @bot.message_handler(
+        func=lambda m: m.text == FOOTBALL_LIVE_ENTRY
+        and session_manager.get_mode(m.chat.id) == SessionMode.WAITING_FOOTBALL_ACTION
+    )
+    def open_live(msg):
+        ask_football_live_action(bot, msg)
+
+    @bot.message_handler(
+        func=lambda m: m.text == FOOTBALL_LIVE_MATCHES
+        and session_manager.get_mode(m.chat.id) == SessionMode.WAITING_FOOTBALL_LIVE_ACTION
+    )
+    def show_today(msg):
+        loading = bot.send_message(msg.chat.id, "🔍 Récupération des matchs du jour…")
+        try:
+            matches = football_data_service.get_today_matches()
+            bot.edit_message_text(
+                _format_today_matches(matches),
+                msg.chat.id, loading.message_id, parse_mode="Markdown",
+            )
+        except Exception as e:
+            logger.exception("Erreur today matches: %s", e)
+            bot.edit_message_text(f"❌ Erreur : {e}", msg.chat.id, loading.message_id)
+        ask_football_live_action(bot, msg)
+
+    @bot.message_handler(
+        func=lambda m: m.text in {FOOTBALL_LIVE_STANDINGS, FOOTBALL_LIVE_SCORERS, FOOTBALL_LIVE_MATCHDAY}
+        and session_manager.get_mode(m.chat.id) == SessionMode.WAITING_FOOTBALL_LIVE_ACTION
+    )
+    def live_choose_competition(msg):
+        session_manager.set_mode(
+            msg.chat.id,
+            SessionMode.WAITING_FOOTBALL_LIVE_COMPETITION,
+            {"live_action": msg.text},
+        )
+        bot.send_message(
+            msg.chat.id,
+            f"*{msg.text}*\n{SEPARATOR}\nChoisissez une compétition :",
+            parse_mode="Markdown",
+            reply_markup=Keyboards.football_live_competitions(),
+        )
+
+    @bot.message_handler(
+        func=lambda m: session_manager.get_mode(m.chat.id) == SessionMode.WAITING_FOOTBALL_LIVE_COMPETITION
+    )
+    def live_render(msg):
+        if msg.text == BACK_TO_MENU:
+            show_main_menu(bot, msg)
+            return
+        comp_code = Config.FOOTBALL_DATA_COMPETITIONS.get(msg.text)
+        if not comp_code:
+            bot.send_message(msg.chat.id, "❌ Compétition non reconnue.")
+            return
+        session = session_manager.get_session(msg.chat.id)
+        action = session.data.get("live_action")
+        _render_live(bot, msg, action, comp_code, msg.text)
 
     @bot.message_handler(
         func=lambda m: session_manager.get_mode(m.chat.id) == SessionMode.WAITING_FOOTBALL_TEAM_PICK
